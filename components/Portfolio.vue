@@ -1,0 +1,9 @@
+<template>
+  <section id="portfolio" class="h-screen bg-black text-white">
+    <h1>Hello</h1>
+  </section>
+</template>
+
+<script setup lang="ts"></script>
+
+<style scoped></style>
