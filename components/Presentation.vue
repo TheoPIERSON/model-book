@@ -35,7 +35,7 @@ onMounted(() => {
   const startAnimation = (element: HTMLElement, index: number) => {
     gsap.fromTo(
       element,
-      { text: "" }, // Commence avec un texte vide
+      { text: "." }, // Commence avec un texte vide
       {
         text: element.textContent || "", // Si textContent est null, utiliser une chaîne vide
         duration: 1.3, // Durée de l'animation

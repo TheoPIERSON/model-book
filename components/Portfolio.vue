@@ -1,6 +1,7 @@
 <template>
-  <section id="portfolio" class="h-screen bg-black font-CourierPrime text-zinc-300">
+  <section id="portfolio" class="h-full bg-black font-CourierPrime text-zinc-300">
     <Presentation />
+    <Galery />
   </section>
 </template>
 
