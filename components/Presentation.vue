@@ -1,5 +1,5 @@
 <template>
-  <section class="p-16">
+  <section class="p-10 md:p-16">
     <p ref="text1">Name : Mas</p>
     <p ref="text2">Location : Paris</p>
     <p ref="text3">Height : 185</p>
@@ -38,8 +38,8 @@ onMounted(() => {
       { text: "" }, // Commence avec un texte vide
       {
         text: element.textContent || "", // Si textContent est null, utiliser une chaîne vide
-        duration: 1.5, // Durée de l'animation
-        delay: index * 1.5, // Décalage entre chaque ligne
+        duration: 1.3, // Durée de l'animation
+        delay: index * 1.3, // Décalage entre chaque ligne
         ease: "none", // Pas d'effet d'accélération
       }
     );
