@@ -1,6 +1,6 @@
 <template>
-  <section id="portfolio" class="h-screen bg-black text-white">
-    <h1>Hello</h1>
+  <section id="portfolio" class="h-screen bg-black font-CourierPrime text-zinc-300">
+    <Presentation />
   </section>
 </template>
 

@@ -78,29 +78,4 @@ section {
   height: 100vh;
   position: relative;
 }
-
-.hero-story {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.full-col,
-.left-col,
-.right-col,
-.middle-col {
-  display: inline-block;
-}
-
-.width-100 {
-  width: 100%;
-}
-
-.width-33 {
-  width: 33.33%;
-}
-
-.width-66 {
-  width: 66.66%;
-}
 </style>
