@@ -1,5 +1,8 @@
 <template>
-  <section id="contact" class="flex justify-between relative font-CourierPrime bg-black text-zinc-300 p-10 md:p-16">
+  <section
+    id="contact"
+    class="grid md:flex justify-between relative font-CourierPrime bg-black text-zinc-300 p-10 md:p-16"
+  >
     <div>
       <h1>Mas - Profesionnal model</h1>
       <h2>Based in Paris - France</h2>
