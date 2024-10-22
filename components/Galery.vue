@@ -1,11 +1,11 @@
 <template>
-  <section class="relative min-h-screen w-full bg-black flex justify-center flex-wrap">
+  <section class="relative min-h-screen w-full bg-black flex justify-center flex-wrap content-start">
     <!-- Boucle pour afficher les images cliquables -->
     <NuxtImg
       v-for="(image, index) in images"
       :key="index"
       :src="image"
-      class="image-thumb w-1/4 cursor-pointer p-2 object-cover"
+      class="image-thumb w-1/4 cursor-pointer p-2 object-cover h-auto"
       @click="openModal(image)"
     />
     <!-- Modale avec transition pour l'animation -->
@@ -26,23 +26,53 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 
-// Créer un tableau d'images
 const images = ["max-red.png", "max-blue.png", "max-green.png", "max-purple.png", "max-red2.png"];
-
-// Créer une variable pour gérer l'état de la modale et l'image sélectionnée
 const isModalOpen = ref(false);
 const modalImage = ref("");
 
-// Fonction pour ouvrir la modale avec l'image cliquée
 const openModal = (imageSrc: string) => {
   modalImage.value = imageSrc;
   isModalOpen.value = true;
 };
 
-// Fonction pour fermer la modale
 const closeModal = () => {
   isModalOpen.value = false;
 };
+
+// Fonction pour observer les images lorsqu'elles entrent dans le viewport
+const observer = ref<IntersectionObserver | null>(null);
+
+onMounted(() => {
+  observer.value = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+        }
+      });
+    },
+    { threshold: 0.1 } // Le seuil à partir duquel l'élément est considéré comme visible
+  );
+
+  const images = document.querySelectorAll(".image-thumb");
+  images.forEach((image) => observer.value?.observe(image));
+});
+
+onBeforeUnmount(() => {
+  if (observer.value) {
+    observer.value.disconnect();
+  }
+});
 </script>
+<style scoped>
+.image-thumb {
+  opacity: 0;
+  transition: opacity 0.6s ease-in-out;
+}
+
+.image-thumb.visible {
+  opacity: 1;
+}
+</style>

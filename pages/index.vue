@@ -1,8 +1,9 @@
 <template>
   <BaseNavigation />
   <main>
-    <HeroBanner id="hero" />
+    <HeroBanner id="hero" class="h-screen" />
     <Portfolio id="portfolio" />
+    <Contact id="contact" />
     <!-- Ajoute tes autres sections ici -->
   </main>
 </template>
@@ -75,7 +76,7 @@ onUnmounted(() => {
 <style scoped>
 /* Style pour ajuster les sections */
 section {
-  height: 100vh;
+  height: auto;
   position: relative;
 }
 </style>
