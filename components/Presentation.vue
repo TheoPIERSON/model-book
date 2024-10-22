@@ -1,5 +1,5 @@
 <template>
-  <section class="p-10 md:p-16 flex justify-between">
+  <section class="p-10 md:p-16 grid md:flex justify-between">
     <div>
       <p ref="text1">Height : 185</p>
       <p ref="text2">Chest : 82</p>

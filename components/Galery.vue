@@ -5,7 +5,7 @@
       v-for="(image, index) in images"
       :key="index"
       :src="image"
-      class="image-thumb w-1/4 cursor-pointer p-2 object-cover h-auto"
+      class="image-thumb w-1/2 md:w-1/4 cursor-pointer p-2 object-cover h-auto"
       @click="openModal(image)"
     />
     <!-- Modale avec transition pour l'animation -->
@@ -17,7 +17,7 @@
       >
         <div class="relative">
           <!-- Image agrandie dans la modale -->
-          <NuxtImg :src="modalImage" class="modal-image" />
+          <NuxtImg :src="modalImage" class="modal-image p-2" />
         </div>
       </div>
     </transition>
