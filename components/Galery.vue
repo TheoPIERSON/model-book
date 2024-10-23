@@ -2,6 +2,9 @@
   <section class="relative min-h-screen w-full bg-black flex justify-center flex-wrap content-start">
     <!-- Boucle pour afficher les images cliquables -->
     <NuxtImg
+      alt="Picture of the model"
+      width="200px"
+      height="300px"
       v-for="(image, index) in images"
       :key="index"
       :src="image"
@@ -17,7 +20,7 @@
       >
         <div class="relative">
           <!-- Image agrandie dans la modale -->
-          <NuxtImg :src="modalImage" class="modal-image p-2" />
+          <NuxtImg :src="modalImage" class="modal-image p-2" alt="Picture of the model in full screen" />
         </div>
       </div>
     </transition>
@@ -28,7 +31,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from "vue";
 
-const images = ["max-red.png", "max-blue.png", "max-green.png", "max-purple.png", "max-red2.png"];
+const images = ["max-red.webp", "max-blue.webp", "max-green.webp", "max-purple.webp", "max-red2.webp"];
 const isModalOpen = ref(false);
 const modalImage = ref("");
 
