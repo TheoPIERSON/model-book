@@ -21,6 +21,7 @@
     "vue-router": "latest"
   },
   "devDependencies": {
-    "@iconify-json/bx": "^1.2.1"
+    "@iconify-json/bx": "^1.2.1",
+    "@iconify-json/bxl": "^1.2.1"
   }
 }
