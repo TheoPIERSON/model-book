@@ -6,6 +6,7 @@
     <Contact id="contact" />
     <!-- Ajoute tes autres sections ici -->
   </main>
+
   <Footer />
 </template>
 
