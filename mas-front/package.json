@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@iconify-json/bx": "^1.2.1",
-    "@iconify-json/bxl": "^1.2.1"
+    "@iconify-json/bxl": "^1.2.1",
+    "@iconify-json/material-symbols": "^1.2.9"
   }
 }
