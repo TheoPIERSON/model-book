@@ -3,7 +3,6 @@ package com.masphoto.masphoto.service;
 
 import com.masphoto.masphoto.entities.User;
 import com.masphoto.masphoto.repositories.UserRepository;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,4 +30,5 @@ public class UserService {
 
         return userRepository.save(user);
     }
+
 }
