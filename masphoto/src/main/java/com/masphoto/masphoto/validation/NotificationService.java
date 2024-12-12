@@ -23,7 +23,7 @@ public class NotificationService {
         message.setSubject("Votre code d'activation Onyx Institut");
         String text =  String.format(
                 "Bonjour %s,\n\n"+
-                        "Merci d'avoir créé un compte chez Onyx Institut\n\n"+
+                        "Merci d'avoir créé un compte\n\n"+
                         "Voici le code d'activation de votre compte:\n\n %s",
                 validation.getUser().getUsername(),
                 validation.getCode()
