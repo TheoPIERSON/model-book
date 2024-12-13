@@ -33,8 +33,6 @@ public class ApplicationSecurityConfiguration {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/user/add-user").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/user/activate").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user/connexion").permitAll()
                         .anyRequest().authenticated()
                 )

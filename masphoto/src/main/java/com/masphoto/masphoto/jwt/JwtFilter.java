@@ -30,23 +30,34 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String requestURI = request.getRequestURI();
+
+        // Exclure les endpoints de connexion et d'inscription
+        if (requestURI.equals("/user/connexion") || requestURI.equals("/user/register")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String token = null;
         Jwt tokenInDatabase = null;
         String username = null;
         boolean isTokenExpired = true;
 
+        logger.info("Request URI: " + requestURI);
+        logger.info("Authorization Header: " + request.getHeader("Authorization"));
+
         final String authorization = request.getHeader("Authorization");
-        if(authorization != null && authorization.startsWith("Bearer ")){
+        if (authorization != null && authorization.startsWith("Bearer ")) {
             token = authorization.substring(7);
             tokenInDatabase = this.jwtService.tokenByValue(token);
             isTokenExpired = jwtService.isTokenExpired(token);
             username = jwtService.readUsername(token);
         }
 
-        if(!isTokenExpired
+        if (!isTokenExpired
+                && tokenInDatabase != null
                 && tokenInDatabase.getUser().getEmail().equals(username)
-                && SecurityContextHolder.getContext().getAuthentication() == null
-        ) {
+                && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userService.loadUserByUsername(username);
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -54,4 +65,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
+
 }
