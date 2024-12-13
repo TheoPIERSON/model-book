@@ -5,11 +5,12 @@
     </div>
 
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-      <form class="space-y-6" action="#" method="POST">
+      <form class="space-y-6" @submit.prevent="handleLogin">
         <div>
           <label for="email" class="block text-sm/6 font-medium text-gray-900">Email address</label>
           <div class="mt-2">
             <input
+              v-model="email"
               type="email"
               name="email"
               id="email"
@@ -29,6 +30,7 @@
           </div>
           <div class="mt-2">
             <input
+              v-model="password"
               type="password"
               name="password"
               id="password"
@@ -40,19 +42,50 @@
         </div>
 
         <div>
-          <NuxtLink
-            to="addImages"
+          <button
             type="submit"
             class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
             Sign in
-          </NuxtLink>
+          </button>
         </div>
       </form>
+
+      <!-- Affichage des erreurs -->
+      <p v-if="errorMessage" class="mt-4 text-center text-sm font-medium text-red-600">{{ errorMessage }}</p>
     </div>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useCookie } from "#app";
 
-<style scoped></style>
+const email = ref("");
+const password = ref("");
+const errorMessage = ref("");
+const router = useRouter();
+
+const handleLogin = async () => {
+  try {
+    // Appel à l'API
+    const response: any = await $fetch("/user/connexion", {
+      baseURL: useRuntimeConfig().public.apiBaseUrl,
+      method: "POST",
+      body: { username: email.value, password: password.value },
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    // Stocker le token dans un cookie
+    useCookie("auth_token").value = response.token;
+
+    // Rediriger vers une autre page (exemple : tableau de bord ou galerie)
+    router.push("/addImages");
+  } catch (error: any) {
+    errorMessage.value = error?.data?.message || "An error occurred during login.";
+  }
+};
+</script>

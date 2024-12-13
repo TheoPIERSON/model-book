@@ -33,7 +33,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
 
         // Exclure les endpoints de connexion et d'inscription
-        if (requestURI.equals("/user/connexion") || requestURI.equals("/user/register")) {
+        if (requestURI.endsWith("/user/connexion")) {
             filterChain.doFilter(request, response);
             return;
         }
