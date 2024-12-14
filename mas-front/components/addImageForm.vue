@@ -14,7 +14,9 @@
           @drop.prevent="handleDrop"
         >
           <input type="file" id="photo" accept="image/*" @change="handleFileSelect" hidden ref="fileInput" />
-          <p @click="triggerFileInput"><Icon name="material-symbols:photo-filter-sharp" class="w-full p-10" /></p>
+          <p @click="triggerFileInput">
+            <Icon name="material-symbols:photo-filter-sharp" class="w-full p-10" />
+          </p>
           <p v-if="selectedFile">{{ selectedFile.name }}</p>
         </div>
       </div>
@@ -25,9 +27,15 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { useNuxtApp } from "#app";
+import { useCookie } from "#app";
+
+const { $axios } = useNuxtApp();
 
 const title = ref("");
 const selectedFile = ref<File | null>(null);
+const authToken = useCookie("auth_token").value;
+
 const fileInput = ref<HTMLInputElement | null>(null);
 
 const handleFileSelect = (event: Event) => {
@@ -49,14 +57,32 @@ const triggerFileInput = () => {
   fileInput.value?.click();
 };
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   if (!selectedFile.value) {
     alert("Veuillez sélectionner une image.");
     return;
   }
-  console.log("Image:", selectedFile.value);
-  console.log("Titre:", title.value);
-  // Ajouter une logique pour envoyer les données au backend
+
+  const formData = new FormData();
+  formData.append("file", selectedFile.value);
+  formData.append("title", title.value);
+
+  // Récupération du token depuis le cookie
+  const authToken = useCookie("auth_token").value;
+
+  try {
+    const response = await $axios.post("/photos/upload", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${authToken}`, // Ajout du token ici
+      },
+    });
+    alert("Image uploadée avec succès !");
+    console.log(response.data);
+  } catch (error) {
+    console.error("Erreur lors de l'upload :", error);
+    alert("Erreur lors de l'upload de l'image.");
+  }
 };
 </script>
 

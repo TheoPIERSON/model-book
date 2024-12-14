@@ -78,12 +78,19 @@ const handleLogin = async () => {
         "Content-Type": "application/json",
       },
     });
+    console.log(useRuntimeConfig().public.apiBaseUrl);
 
-    // Stocker le token dans un cookie
-    useCookie("auth_token").value = response.token;
+    if (response.token) {
+      useCookie("auth_token", {
+        secure: true,
+        httpOnly: true,
+        sameSite: "strict",
+      }).value = response.token;
 
-    // Rediriger vers une autre page (exemple : tableau de bord ou galerie)
-    router.push("/addImages");
+      router.push("/addImages");
+    } else {
+      errorMessage.value = "Erreur : aucun token reçu.";
+    }
   } catch (error: any) {
     errorMessage.value = error?.data?.message || "An error occurred during login.";
   }

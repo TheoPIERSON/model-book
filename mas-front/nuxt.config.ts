@@ -24,4 +24,5 @@ export default defineNuxtConfig({
       apiBaseUrl: process.env.API_BASE_URL,
     },
   },
+  plugins: [{ src: "~/plugins/axios", mode: "client" }],
 });
