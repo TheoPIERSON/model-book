@@ -3,6 +3,7 @@ package com.masphoto.masphoto.service;
 import com.masphoto.masphoto.config.SupabaseConfig;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
 
@@ -12,7 +13,8 @@ public class SupabaseStorageService {
     private final OkHttpClient client;
     private final String supabaseUrl;
     private final String supabaseKey;
-    private final String bucketName = "masphoto-bucket";
+    @Value("${supabase.bucket}")
+    private String bucketName;
 
     @Autowired
     public SupabaseStorageService(SupabaseConfig supabaseConfig, OkHttpClient client) {
@@ -28,14 +30,17 @@ public class SupabaseStorageService {
         Request request = new Request.Builder()
                 .url(supabaseUrl + "/storage/v1/object/" + bucketName + "/" + fileName)
                 .addHeader("Authorization", "Bearer " + supabaseKey)
+                .addHeader("x-upsert", "true") // Permet de remplacer un fichier existant
                 .put(body)
                 .build();
 
-        Response response = client.newCall(request).execute();
-        if (!response.isSuccessful()) {
-            throw new IOException("Erreur lors de l'upload de l'image : " + response);
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                String errorBody = response.body() != null ? response.body().string() : "No error details";
+                throw new IOException("Erreur lors de l'upload de l'image : " + response + " - " + errorBody);
+            }
+            return supabaseUrl + "/storage/v1/object/public/" + bucketName + "/" + fileName;
         }
-        return supabaseUrl + "/storage/v1/object/public/" + bucketName + "/" + fileName;
     }
 
     // Méthode pour supprimer une image
@@ -51,4 +56,5 @@ public class SupabaseStorageService {
             throw new IOException("Erreur lors de la suppression de l'image : " + response);
         }
     }
+
 }

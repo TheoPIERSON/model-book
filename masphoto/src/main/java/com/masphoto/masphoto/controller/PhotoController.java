@@ -17,12 +17,19 @@ public class PhotoController {
     @PostMapping("/upload")
     public ResponseEntity<String> uploadPhoto(@RequestParam("file") MultipartFile file) {
         try {
+            // Log pour vérifier les propriétés du fichier
+            System.out.println("Nom du fichier : " + file.getOriginalFilename());
+            System.out.println("Type du fichier : " + file.getContentType());
+            System.out.println("Taille du fichier : " + file.getSize());
+
             String url = storageService.uploadImage(file.getOriginalFilename(), file.getBytes(), file.getContentType());
             return ResponseEntity.ok("Image uploadée avec succès : " + url);
         } catch (Exception e) {
+            e.printStackTrace(); // Imprime le stack trace complet de l'erreur
             return ResponseEntity.status(500).body("Erreur : " + e.getMessage());
         }
     }
+
 
     // Endpoint pour supprimer une image
     @DeleteMapping("/delete/{fileName}")

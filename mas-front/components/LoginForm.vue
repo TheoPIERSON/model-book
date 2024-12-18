@@ -78,14 +78,13 @@ const handleLogin = async () => {
         "Content-Type": "application/json",
       },
     });
-    console.log(useRuntimeConfig().public.apiBaseUrl);
+    console.log("Réponse de l'API :", response);
 
-    if (response.token) {
+    if (response.bearer) {
       useCookie("auth_token", {
         secure: true,
-        httpOnly: true,
         sameSite: "strict",
-      }).value = response.token;
+      }).value = response.bearer;
 
       router.push("/addImages");
     } else {

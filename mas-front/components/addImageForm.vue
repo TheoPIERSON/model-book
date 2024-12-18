@@ -65,7 +65,6 @@ const handleSubmit = async () => {
 
   const formData = new FormData();
   formData.append("file", selectedFile.value);
-  formData.append("title", title.value);
 
   // Récupération du token depuis le cookie
   const authToken = useCookie("auth_token").value;
