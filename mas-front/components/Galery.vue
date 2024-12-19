@@ -80,7 +80,6 @@ onMounted(() => {
   opacity: 0;
   transform: translateY(20px);
   animation: fadeIn 1s ease-out forwards;
-  animation-delay: calc(var(--index) * 0.2s); /* Délai pour chaque image */
 }
 
 @keyframes fadeIn {
