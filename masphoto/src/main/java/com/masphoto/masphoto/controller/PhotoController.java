@@ -1,44 +1,40 @@
 package com.masphoto.masphoto.controller;
 
-import com.masphoto.masphoto.service.SupabaseStorageService;
+import com.masphoto.masphoto.service.PhotoService;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.List;
+
 @RestController
+@AllArgsConstructor
 @RequestMapping("/photos")
 public class PhotoController {
 
-    @Autowired
-    private SupabaseStorageService storageService;
+    private PhotoService photoService;
 
-    // Endpoint pour uploader une image
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadPhoto(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
-            // Log pour vérifier les propriétés du fichier
-            System.out.println("Nom du fichier : " + file.getOriginalFilename());
-            System.out.println("Type du fichier : " + file.getContentType());
-            System.out.println("Taille du fichier : " + file.getSize());
-
-            String url = storageService.uploadImage(file.getOriginalFilename(), file.getBytes(), file.getContentType());
-            return ResponseEntity.ok("Image uploadée avec succès : " + url);
-        } catch (Exception e) {
-            e.printStackTrace(); // Imprime le stack trace complet de l'erreur
-            return ResponseEntity.status(500).body("Erreur : " + e.getMessage());
+            String savedFilePath = photoService.saveFile(file.getOriginalFilename(), file.getBytes());
+            return ResponseEntity.ok("Fichier sauvegardé avec succès : " + savedFilePath);
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("Erreur lors de la sauvegarde : " + e.getMessage());
         }
     }
 
-
-    // Endpoint pour supprimer une image
-    @DeleteMapping("/delete/{fileName}")
-    public ResponseEntity<String> deletePhoto(@PathVariable String fileName) {
+    @GetMapping("/list")
+    public ResponseEntity<List<String>> listAllFiles() {
         try {
-            storageService.deleteImage(fileName);
-            return ResponseEntity.ok("Image supprimée avec succès : " + fileName);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Erreur : " + e.getMessage());
+            List<String> fileNames = photoService.listAllPhotos();
+            return ResponseEntity.ok(fileNames);
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body(List.of("Erreur lors de la récupération des fichiers : " + e.getMessage()));
         }
     }
 }

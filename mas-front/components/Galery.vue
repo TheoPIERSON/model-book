@@ -2,14 +2,14 @@
   <section class="relative min-h-screen w-full bg-black flex justify-center flex-wrap content-start">
     <!-- Boucle pour afficher les images cliquables -->
     <NuxtImg
+      v-for="(image, index) in images"
+      :key="index"
+      :src="getImageUrl(image)"
       alt="Picture of the model"
       width="200px"
       height="300px"
-      v-for="(image, index) in images"
-      :key="index"
-      :src="image"
-      class="image-thumb w-1/2 md:w-1/4 cursor-pointer p-2 object-cover h-auto"
-      @click="openModal(image)"
+      class="w-1/2 md:w-1/4 cursor-pointer p-2 object-cover h-auto"
+      @click="openModal(getImageUrl(image))"
     />
     <!-- Modale avec transition pour l'animation -->
     <transition name="scale">
@@ -24,16 +24,36 @@
         </div>
       </div>
     </transition>
-    <div class="w-1/2 bg-red-500 absolute z-20"></div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, onMounted } from "vue";
+import { useNuxtApp } from "#app";
 
-const images = ["max-red.webp", "max-blue.webp", "max-green.webp", "max-purple.webp", "max-red2.webp"];
+const { $axios, $axiosNoAuth } = useNuxtApp(); // Utilisation d'Axios via le plugin Nuxt
+
+const images = ref<string[]>([]); // Stocke les noms des fichiers récupérés
 const isModalOpen = ref(false);
-const modalImage = ref("");
+const modalImage = ref<string>("");
+
+// URL de base pour accéder aux images
+const backendBaseUrl = "http://localhost:8080";
+
+// Récupère la liste des fichiers depuis le backend
+const fetchImages = async () => {
+  try {
+    const response = await $axios.get("/photos/list");
+    images.value = response.data;
+    console.log("Images récupérées :", images.value);
+    images.value.forEach((image) => console.log("URL complète :", getImageUrl(image)));
+  } catch (error) {
+    console.error("Erreur lors de la récupération des images :", error);
+  }
+};
+
+// Génère l'URL complète d'une image
+const getImageUrl = (fileName: string) => `${backendBaseUrl}/uploads/${fileName}`;
 
 const openModal = (imageSrc: string) => {
   modalImage.value = imageSrc;
@@ -43,39 +63,22 @@ const openModal = (imageSrc: string) => {
 const closeModal = () => {
   isModalOpen.value = false;
 };
-
-// Fonction pour observer les images lorsqu'elles entrent dans le viewport
-const observer = ref<IntersectionObserver | null>(null);
-
-onMounted(() => {
-  observer.value = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("visible");
-        }
-      });
-    },
-    { threshold: 0.1 } // Le seuil à partir duquel l'élément est considéré comme visible
-  );
-
-  const images = document.querySelectorAll(".image-thumb");
-  images.forEach((image) => observer.value?.observe(image));
-});
-
-onBeforeUnmount(() => {
-  if (observer.value) {
-    observer.value.disconnect();
+const testImageRequest = async (fileName: string) => {
+  try {
+    const response = await $axiosNoAuth.get(getImageUrl(fileName), {
+      responseType: "blob",
+    });
+    console.log("Image chargée avec succès :", response);
+  } catch (error) {
+    console.error("Erreur lors du chargement de l'image :", error);
   }
+};
+
+// Charge les images au montage du composant
+onMounted(() => {
+  fetchImages();
+  console.log(getImageUrl("max-green.webp"));
 });
 </script>
-<style scoped>
-.image-thumb {
-  opacity: 0;
-  transition: opacity 0.6s ease-in-out;
-}
 
-.image-thumb.visible {
-  opacity: 1;
-}
-</style>
+<style scoped></style>

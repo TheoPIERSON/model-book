@@ -37,6 +37,8 @@ public class ApplicationSecurityConfiguration {
                 .cors(cors -> corsConfigurationSource()) // Active CORS avec ta configuration
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/user/connexion").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/photos/list").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

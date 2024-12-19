@@ -22,7 +22,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Transactional
-
 @AllArgsConstructor
 @Service
 public class JwtService {
