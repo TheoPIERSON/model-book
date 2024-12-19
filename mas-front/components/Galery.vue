@@ -8,7 +8,8 @@
       alt="Picture of the model"
       width="200px"
       height="300px"
-      class="w-1/2 md:w-1/4 cursor-pointer p-2 object-cover h-auto"
+      :style="`--index: ${index}`"
+      class="image-item w-1/2 md:w-1/4 cursor-pointer p-2 object-cover h-auto"
       @click="openModal(getImageUrl(image))"
     />
     <!-- Modale avec transition pour l'animation -->
@@ -28,31 +29,36 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { onMounted, ref, nextTick } from "vue";
 import { useNuxtApp } from "#app";
+import { gsap } from "gsap";
 
-const { $axios, $axiosNoAuth } = useNuxtApp(); // Utilisation d'Axios via le plugin Nuxt
-
-const images = ref<string[]>([]); // Stocke les noms des fichiers récupérés
+const images = ref<string[]>([]);
 const isModalOpen = ref(false);
 const modalImage = ref<string>("");
 
-// URL de base pour accéder aux images
+const { $axios } = useNuxtApp();
 const backendBaseUrl = "http://localhost:8080";
 
-// Récupère la liste des fichiers depuis le backend
 const fetchImages = async () => {
   try {
     const response = await $axios.get("/photos/list");
     images.value = response.data;
     console.log("Images récupérées :", images.value);
-    images.value.forEach((image) => console.log("URL complète :", getImageUrl(image)));
+
+    // Attendre le prochain cycle de rendu pour que les images soient présentes dans le DOM
+    await nextTick();
+    gsap.from(".image-item", {
+      opacity: 0,
+      y: 20,
+      duration: 1,
+      stagger: 0.2, // Délai entre chaque animation
+    });
   } catch (error) {
     console.error("Erreur lors de la récupération des images :", error);
   }
 };
 
-// Génère l'URL complète d'une image
 const getImageUrl = (fileName: string) => `${backendBaseUrl}/uploads/${fileName}`;
 
 const openModal = (imageSrc: string) => {
@@ -63,22 +69,24 @@ const openModal = (imageSrc: string) => {
 const closeModal = () => {
   isModalOpen.value = false;
 };
-const testImageRequest = async (fileName: string) => {
-  try {
-    const response = await $axiosNoAuth.get(getImageUrl(fileName), {
-      responseType: "blob",
-    });
-    console.log("Image chargée avec succès :", response);
-  } catch (error) {
-    console.error("Erreur lors du chargement de l'image :", error);
-  }
-};
 
-// Charge les images au montage du composant
 onMounted(() => {
   fetchImages();
-  console.log(getImageUrl("max-green.webp"));
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.image-item {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeIn 1s ease-out forwards;
+  animation-delay: calc(var(--index) * 0.2s); /* Délai pour chaque image */
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>
